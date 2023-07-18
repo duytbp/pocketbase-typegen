@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // src/cli.ts
-import "dotenv/config";
+import dotenv from "dotenv";
 
 // src/schema.ts
 import FormData from "form-data";
@@ -271,6 +271,8 @@ async function main(options2) {
   } else if (options2.url) {
     schema = await fromURL(options2.url, options2.email, options2.password);
   } else if (options2.env) {
+    const path = typeof options2.env === "string" ? options2.env : ".env";
+    dotenv.config({ path });
     if (!process.env.PB_TYPEGEN_URL || !process.env.PB_TYPEGEN_EMAIL || !process.env.PB_TYPEGEN_PASSWORD) {
       return console.error(
         "Missing environment variables. Check options: pocketbase-typegen --help"
@@ -317,7 +319,7 @@ program.name("Pocketbase Typegen").version(version).description(
   "path to save the typescript output file",
   "pocketbase-types.ts"
 ).option(
-  "-e, --env",
+  "-e, --env [path]",
   "flag to use environment variables for configuration, add PB_TYPEGEN_URL, PB_TYPEGEN_EMAIL, PB_TYPEGEN_PASSWORD to your .env file"
 );
 program.parse(process.argv);
